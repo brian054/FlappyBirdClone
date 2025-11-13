@@ -26,7 +26,7 @@ namespace FlappyBirdClone
             Window.Title = "Flappy Bird Clone!";
             Window.AllowUserResizing = false;
 
-            this.IsFixedTimeStep = true;
+            this.IsFixedTimeStep = true; // this is set to true by default in Monogame apparently, according to GPT
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0); // 60 updates per second
         }
 
@@ -52,7 +52,7 @@ namespace FlappyBirdClone
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            FlappyBird.Update(gameTime);
 
             base.Update(gameTime);
         }
