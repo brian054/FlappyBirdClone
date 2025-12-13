@@ -15,17 +15,20 @@ namespace FlappyBirdClone
 {
     public class Flappy
     {
-        private Vector2 PreviousPosition { get; set; }
         private Vector2 Position; //{ get; set; } TODO: Look up field vs properties, using a field might be easier for teaching
         // since you wouldn't have to do Position = new Vector2(Position.X, calculation for Gravity Y position)
         // Performance wise it doesn't seem to really matter, I'd go with readability and simplicity over 'standard' especially for such a small game.
         // If this was your Player.cs class in Minicraft, then you'd wanna make this a property with a private set, public get.
         private Vector2 Size { get; set; } // where X = width, X = height
 
-        // vertical velocity
-        // maximum vertical velocity
-        // bool isFlyingUp
-        // const gravity
+        private Boolean IsFlyingUp;
+        private float VerticalVelocity = 0;
+        private float FlyUpSpeed = -220f; 
+        private float MaxFallSpeed = 900f;
+        private const float Gravity = 700f;
+
+        private KeyboardState CurrKeyState;
+        private KeyboardState PrevKeyState;
 
         public Rectangle FlappyRectangle =>
             new Rectangle(
@@ -44,18 +47,22 @@ namespace FlappyBirdClone
 
         public void Update(GameTime gameTime)
         {
-            // Add gravity
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds; // the amount of time that has passed since last frame, in seconds.
-            PreviousPosition = Position;
-            Position.Y += 250 * dt; // 250 pixels per second
+            PrevKeyState = CurrKeyState;
+            CurrKeyState = Keyboard.GetState();
 
+            if (CurrKeyState.IsKeyDown(Keys.Space) && !PrevKeyState.IsKeyDown(Keys.Space)) {
+                VerticalVelocity = FlyUpSpeed; 
+            }
+ 
+            VerticalVelocity += Gravity * dt;
+         
+            if (VerticalVelocity > MaxFallSpeed) // tune this 
+            {
+                VerticalVelocity = MaxFallSpeed;
+            }
 
-            // If player clicked, move up a little
-            // if input pressed to move bird, move the bird, maybe move gravity into else
-
-
-            // end:
-
+            Position.Y += VerticalVelocity * dt;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
