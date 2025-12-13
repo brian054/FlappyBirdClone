@@ -10,7 +10,9 @@ namespace FlappyBirdClone
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        Flappy FlappyBird; 
+        Flappy FlappyBird;
+
+        Texture2D backgroundTexture;
 
         public Game1()
         {
@@ -44,6 +46,8 @@ namespace FlappyBirdClone
             Globals.dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
             Globals.dummyTexture.SetData(new[] { Color.White });
 
+            backgroundTexture = Content.Load<Texture2D>("background");
+
             FlappyBird = new Flappy();
         }
 
@@ -62,6 +66,8 @@ namespace FlappyBirdClone
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
+            _spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
+                                                  new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
             FlappyBird.Draw(_spriteBatch);
             _spriteBatch.End();
 

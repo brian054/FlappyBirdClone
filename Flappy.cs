@@ -21,7 +21,7 @@ namespace FlappyBirdClone
         // If this was your Player.cs class in Minicraft, then you'd wanna make this a property with a private set, public get.
         private Vector2 Size { get; set; } // where X = width, X = height
 
-        private Boolean IsFlyingUp;
+        private Boolean IsFlappyColliding = false;
         private float VerticalVelocity = 0;
         private float FlyUpSpeed = -220f; 
         private float MaxFallSpeed = 900f;
@@ -62,7 +62,15 @@ namespace FlappyBirdClone
                 VerticalVelocity = MaxFallSpeed;
             }
 
-            Position.Y += VerticalVelocity * dt;
+            if (!IsFlappyColliding)
+            {
+                Position.Y += VerticalVelocity * dt;
+            }
+            if (Position.Y > 390) // check collision with 'ground', do private int GroundYPosition = 390
+            {
+                IsFlappyColliding = true; // game over if he collides with anything
+            }
+
         }
         public void Draw(SpriteBatch spriteBatch)
         {
