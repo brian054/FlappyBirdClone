@@ -58,6 +58,10 @@ namespace FlappyBirdClone
 
             FlappyBird.Update(gameTime);
 
+            // Move pipe - again refer to base code on GH
+
+            // rq: 2 rects, top and bottom, thatsd
+
             base.Update(gameTime);
         }
 
