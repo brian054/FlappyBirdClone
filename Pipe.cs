@@ -14,8 +14,10 @@ namespace FlappyBirdClone
         // floor height = 575???? not sure with ours
 
         // need a gapsize and minimum gap size too
-        private Vector2 TopPosition;
+        private Vector2 TopPosition; 
         private Vector2 BottomPosition;
+
+        private float Speed = 120f; // why does the monitor with higher hz make it all jittery??? investigate
 
         private Vector2 TopSize { get; set; } // where X = width, X = height
         private Vector2 BottomSize { get; set; }
@@ -47,8 +49,24 @@ namespace FlappyBirdClone
         public void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds; // the amount of time that has passed since last frame, in seconds.
+            float dx = Speed * dt;
 
+            // is it integer related idfk 
 
+            if (TopPosition.X < -50)
+            {
+                TopPosition.X = 200;
+                BottomPosition.X = 200;
+            }
+
+            TopPosition.X -= dx;
+            BottomPosition.X -= dx;
+
+            //TopPosition.X -= Speed * dt;
+            //BottomPosition.X -= Speed * dt;
+
+            //TopRect.X -= Speed * dt;
+            //BottomRect.X -= Speed * dt;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
