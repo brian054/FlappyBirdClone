@@ -62,13 +62,13 @@ namespace FlappyBirdClone
                 VerticalVelocity = MaxFallSpeed;
             }
 
+            if (Position.Y + Size.Y >= Globals.FloorHeight) 
+            {
+                IsFlappyColliding = true; // game over if he collides with anything
+            }
             if (!IsFlappyColliding)
             {
                 Position.Y += VerticalVelocity * dt;
-            }
-            if (Position.Y > 390) // check collision with 'ground', do private int GroundYPosition = 390
-            {
-                IsFlappyColliding = true; // game over if he collides with anything
             }
 
         }

@@ -18,7 +18,7 @@ namespace FlappyBirdClone
 
         public static SpriteFont DefaultFont;
 
-        public const int FloorHeight = 400; // the yPos of the ground
+        public const int FloorHeight = 420; // the yPos of the ground
 
     }
 }

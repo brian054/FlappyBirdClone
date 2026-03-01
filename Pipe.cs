@@ -5,47 +5,64 @@ using System;
 
 namespace FlappyBirdClone
 {
+    // FIELD vs PROPERTY in C#
+    //------------------------------------------------------------------------------------
+    // A field is a private variable that stores the actual internal state of the class.
+    // It is typically named with _camelCase (e.g., _bottomPosition).
+    //
+    // A property is a public-facing member that provides controlled access to data
+    // through get/set accessors. Properties can expose a field, compute a value,
+    // or enforce validation.
+    //
+    // In this class:
+    // - Fields (_topPosition, _bottomPosition, etc.) store internal game state.
+    // - Properties (TopRect, BottomRect) expose derived or read-only data safely.
+    // ------------------------------------------------------------------------------------
     // Represents one pair of rectangles that Flappy fly's through
     public class Pipe
     {
         private int[] PipeHeights;
 
         // floor height = 575???? draw a line and find out where it is
-       
 
+        private readonly Random randomNum = new();
 
-            
-        private Vector2 TopPosition; 
-        private Vector2 BottomPosition;
+        public float XPos => _topPosition.X;
+        private Vector2 _topPosition; // trying to follow the standard, _variable 
+
+        private Vector2 _bottomPosition;
 
         private float Speed = 120f; 
 
-        private Vector2 TopSize { get; set; } // where X = width, Y = height
-        private int PipeWidth = 50;
-        private Vector2 BottomSize { get; set; }
+        private Vector2 _topSize { get; set; } // where X = width, Y = height
+        private const int _pipeWidth = 50;
+        public Vector2 _bottomSize { get; private set; }
 
-        public Rectangle TopRect =>
+        // computed property - so every time you access RightEdge in PipeManager, C# calcualtes the value right there.
+        public float RightEdge => _topPosition.X + _pipeWidth; // used to check if offscreen
+
+        // Rects here are for drawing, collision. 
+        private Rectangle TopRect =>
             new Rectangle(
-                (int)MathF.Round(TopPosition.X),
-                (int)MathF.Round(TopPosition.Y),
-                (int)MathF.Round(TopSize.X),
-                (int)MathF.Round(TopSize.Y)
+                (int)MathF.Round(_topPosition.X),
+                (int)MathF.Round(_topPosition.Y),
+                (int)MathF.Round(_topSize.X),
+                (int)MathF.Round(_topSize.Y)
             );
-        public Rectangle BottomRect =>
+        private Rectangle BottomRect =>
            new Rectangle(
-               (int)MathF.Round(BottomPosition.X),
-               (int)MathF.Round(BottomPosition.Y),
-               (int)MathF.Round(BottomSize.X),
-               (int)MathF.Round(BottomSize.Y)
+               (int)MathF.Round(_bottomPosition.X),
+               (int)MathF.Round(_bottomPosition.Y),
+               (int)MathF.Round(_bottomSize.X),
+               (int)MathF.Round(_bottomSize.Y)
            );
 
-        public Pipe()
+        public Pipe(float startPosX, float gapSize)
         {
-            TopPosition = new Vector2(200, 0);
-            TopSize = new Vector2(PipeWidth, 150); 
-            BottomPosition = new Vector2(200, TopSize.Y + 150);
-            BottomSize = new Vector2(PipeWidth, 100);
-
+            _topPosition = new Vector2(startPosX, 0); // y is constant
+            _topSize = new Vector2(_pipeWidth, randomNum.Next(90, 200)); 
+            _bottomPosition = new Vector2(startPosX, _topSize.Y + gapSize);
+            _bottomSize = new Vector2(_pipeWidth, Globals.FloorHeight - _topSize.Y - gapSize); 
         }
 
         public void Update(GameTime gameTime)
@@ -53,27 +70,25 @@ namespace FlappyBirdClone
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds; // the amount of time that has passed since last frame, in seconds.
             float dx = Speed * dt;
 
-            
-            // remove this later, PipeManager will handle this type of thing
-            if (TopPosition.X < -50)
-            {
-                TopPosition.X = 300;
-                BottomPosition.X = 300;
-            }
-
-            TopPosition.X -= dx;
-            BottomPosition.X -= dx;
+            _topPosition.X -= dx;
+            _bottomPosition.X -= dx;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Globals.dummyTexture, TopPosition, TopRect, Color.Red);
-            spriteBatch.Draw(Globals.dummyTexture, BottomPosition, BottomRect, Color.Red);
-            //spriteBatch.Draw(Globals.dummyTexture, BottomPosition, BottomRect, Color.Red); draw line to find floor height
+            spriteBatch.Draw(Globals.dummyTexture, TopRect, Color.Red);
+            spriteBatch.Draw(Globals.dummyTexture, BottomRect, Color.Red);
         }
 
-        public void SetGap()
+        // Scenario: Pipe goes off screen, this method repositions the pipes x position so we can recycle the pipe pair.
+        public void RecycleXPos(float newXPos)
         {
-
+            _topPosition.X = newXPos;
+            _bottomPosition.X = newXPos;
         }
+
+        //public void SetGap()
+        //{
+
+        //}
     }
 }

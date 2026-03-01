@@ -14,9 +14,7 @@ namespace FlappyBirdClone
 
         Texture2D backgroundTexture;
 
-        Pipe pipeTest;
-
-        private int Score;
+        PipeManager PipeManager;
 
         public Game1()
         {
@@ -52,8 +50,8 @@ namespace FlappyBirdClone
 
             backgroundTexture = Content.Load<Texture2D>("background");
 
-            FlappyBird = new Flappy();
-            pipeTest = new Pipe();
+            FlappyBird = new();
+            PipeManager = new();
         }
 
         protected override void Update(GameTime gameTime)
@@ -62,11 +60,7 @@ namespace FlappyBirdClone
                 Exit();
 
             FlappyBird.Update(gameTime);
-            pipeTest.Update(gameTime);
-
-            // Move pipe - again refer to base code on GH
-
-            // rq: 2 rects, top and bottom, thatsd
+            PipeManager.Update(gameTime, 2); // draw score on screen asap (ScoreManager)
 
             base.Update(gameTime);
         }
@@ -79,7 +73,7 @@ namespace FlappyBirdClone
             _spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
                                                   new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
             FlappyBird.Draw(_spriteBatch);
-            pipeTest.Draw(_spriteBatch);
+            PipeManager.Draw(_spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);
