@@ -16,6 +16,8 @@ namespace FlappyBirdClone
 
         Pipe pipeTest;
 
+        private int Score;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
