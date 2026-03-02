@@ -42,14 +42,16 @@ namespace FlappyBirdClone
         public float RightEdge => _topPosition.X + _pipeWidth; // used to check if offscreen
 
         // Rects here are for drawing, collision. 
-        private Rectangle TopRect =>
+        // Not technically a public variable, it's a public property with only a getter, therefore outside of this
+        // class you can read it (like in pipemanager for collision) but you cannot assign to it.
+        public Rectangle TopRect =>
             new Rectangle(
                 (int)MathF.Round(_topPosition.X),
                 (int)MathF.Round(_topPosition.Y),
                 (int)MathF.Round(_topSize.X),
                 (int)MathF.Round(_topSize.Y)
             );
-        private Rectangle BottomRect =>
+        public Rectangle BottomRect =>
            new Rectangle(
                (int)MathF.Round(_bottomPosition.X),
                (int)MathF.Round(_bottomPosition.Y),

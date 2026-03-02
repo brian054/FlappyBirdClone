@@ -62,6 +62,12 @@ namespace FlappyBirdClone
             FlappyBird.Update(gameTime);
             PipeManager.Update(gameTime, 2); // draw score on screen asap (ScoreManager)
 
+            if (PipeManager.CheckCollision(FlappyBird))
+            {
+                // game state = game over, 
+                System.Diagnostics.Debug.WriteLine("COLLISION!");
+            }
+
             base.Update(gameTime);
         }
 

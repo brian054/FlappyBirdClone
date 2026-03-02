@@ -71,5 +71,18 @@ namespace FlappyBirdClone
                 GapSize = Math.Max(90, GapSize - 20); // adjust these
             }
         }
+
+        public bool CheckCollision(Flappy bird) {
+            foreach (var pipe in Pipes)
+            {
+                if (pipe.TopRect.Intersects(bird.FlappyRectangle) ||
+                    pipe.BottomRect.Intersects(bird.FlappyRectangle))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
