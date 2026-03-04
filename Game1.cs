@@ -16,6 +16,8 @@ namespace FlappyBirdClone
 
         PipeManager PipeManager;
 
+        ScoreManager ScoreBoard;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -47,11 +49,14 @@ namespace FlappyBirdClone
 
             Globals.dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
             Globals.dummyTexture.SetData(new[] { Color.White });
+            Globals.DefaultFont = Content.Load<SpriteFont>("ScoreBoardFont");
 
             backgroundTexture = Content.Load<Texture2D>("background");
 
             FlappyBird = new();
             PipeManager = new();
+            ScoreBoard = new();
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -72,6 +77,11 @@ namespace FlappyBirdClone
                 System.Diagnostics.Debug.WriteLine("COLLISION!");
             }
 
+            if (PipeManager.DidFlappyPassThroughPipe(FlappyBird))
+            {
+                ScoreBoard.IncreaseScore(1);
+            }
+
             base.Update(gameTime);
         }
 
@@ -84,6 +94,7 @@ namespace FlappyBirdClone
                                                   new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
             FlappyBird.Draw(_spriteBatch);
             PipeManager.Draw(_spriteBatch);
+            ScoreBoard.Draw(_spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);

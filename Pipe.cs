@@ -21,22 +21,18 @@ namespace FlappyBirdClone
     // Represents one pair of rectangles that Flappy fly's through
     public class Pipe
     {
+        // TODO standardize the var names too much variation
         private int[] PipeHeights;
-
-        // floor height = 575???? draw a line and find out where it is
-
         private readonly Random randomNum = new();
-
         public float XPos => _topPosition.X;
         private Vector2 _topPosition; // trying to follow the standard, _variable 
-
         private Vector2 _bottomPosition;
-
         private float Speed = 120f; 
-
         private Vector2 _topSize { get; set; } // where X = width, Y = height
         private const int _pipeWidth = 50;
         public Vector2 _bottomSize { get; private set; }
+        public bool HasBeenPassedThrough { get; set; } = false;
+        public float CenterX => TopRect.X + (TopRect.Width / 2f);
 
         // computed property - so every time you access RightEdge in PipeManager, C# calcualtes the value right there.
         public float RightEdge => _topPosition.X + _pipeWidth; // used to check if offscreen
@@ -86,6 +82,9 @@ namespace FlappyBirdClone
         {
             _topPosition.X = newXPos;
             _bottomPosition.X = newXPos;
+
+            // RESET!!!
+            HasBeenPassedThrough = false;
         }
 
         //public void SetGap()

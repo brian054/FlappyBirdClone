@@ -88,5 +88,18 @@ namespace FlappyBirdClone
 
             return false;
         }
+
+        public bool DidFlappyPassThroughPipe(Flappy theBird)
+        {
+            foreach (Pipe pipe in Pipes)
+            {
+                if (!pipe.HasBeenPassedThrough && theBird.FlappyRectangle.Center.X > pipe.CenterX)
+                {
+                    pipe.HasBeenPassedThrough = true;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

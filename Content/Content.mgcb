@@ -25,3 +25,10 @@
 /processorParam:TextureFormat=Color
 /build:background.jpeg
 
+#begin ScoreBoardFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ScoreBoardFont.spritefont
+
