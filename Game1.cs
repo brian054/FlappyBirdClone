@@ -60,11 +60,15 @@ namespace FlappyBirdClone
                 Exit();
 
             FlappyBird.Update(gameTime);
-            PipeManager.Update(gameTime, 2); // draw score on screen asap (ScoreManager)
+            if (!FlappyBird.IsDead)
+            {
+                PipeManager.Update(gameTime, 2, FlappyBird.IsDead); // draw score on screen asap (ScoreManager)
+            }
 
-            if (PipeManager.CheckCollision(FlappyBird))
+            if (!FlappyBird.IsDead && PipeManager.CheckCollision(FlappyBird))
             {
                 // game state = game over, 
+                FlappyBird.Die();
                 System.Diagnostics.Debug.WriteLine("COLLISION!");
             }
 

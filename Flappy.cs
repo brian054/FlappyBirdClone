@@ -21,7 +21,7 @@ namespace FlappyBirdClone
         // If this was your Player.cs class in Minicraft, then you'd wanna make this a property with a private set, public get.
         private Vector2 Size { get; set; } // where X = width, X = height
 
-        private Boolean IsFlappyColliding = false;
+        public bool IsDead { get; private set; }
         private float VerticalVelocity = 0;
         private float FlyUpSpeed = -220f; 
         private float MaxFallSpeed = 900f;
@@ -48,34 +48,46 @@ namespace FlappyBirdClone
         public void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds; // the amount of time that has passed since last frame, in seconds.
+
             PrevKeyState = CurrKeyState;
             CurrKeyState = Keyboard.GetState();
 
-            if (CurrKeyState.IsKeyDown(Keys.Space) && !PrevKeyState.IsKeyDown(Keys.Space)) {
-                VerticalVelocity = FlyUpSpeed; 
-            }
- 
-            VerticalVelocity += Gravity * dt;
-         
-            if (VerticalVelocity > MaxFallSpeed) // tune this 
+            // Only allow flapping if alive
+            if (!IsDead)
             {
-                VerticalVelocity = MaxFallSpeed;
+                bool flapPressed = CurrKeyState.IsKeyDown(Keys.Space) && !PrevKeyState.IsKeyDown(Keys.Space);
+                if (flapPressed)
+                    VerticalVelocity = FlyUpSpeed;
             }
 
-            if (Position.Y + Size.Y >= Globals.FloorHeight) 
-            {
-                IsFlappyColliding = true; // game over if he collides with anything
-            }
-            if (!IsFlappyColliding)
-            {
-                Position.Y += VerticalVelocity * dt;
-            }
+            // Much Cleaner:
+            /* Was doing this:
+             * VerticalVelocity += Gravity * dt;
+             * if (VerticalVelocity > MaxFallSpeed) 
+             * {
+             *    VerticalVelocity = MaxFallSpeed;
+             * }
+             */
+            VerticalVelocity = Math.Min(VerticalVelocity + Gravity * dt, MaxFallSpeed);
+            Position.Y += VerticalVelocity * dt;
 
+            // Check Floor Collision
+            float floorY = Globals.FloorHeight - Size.Y;
+            if (Position.Y >= floorY)
+            {
+                Position.Y = floorY;
+                VerticalVelocity = 0f;
+                IsDead = true;
+            }
         }
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Globals.dummyTexture, Position, FlappyRectangle, Color.Red);
         }
 
+        public void Die()
+        {
+            IsDead = true;
+        }
     }
 }

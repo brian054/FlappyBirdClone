@@ -15,9 +15,10 @@ namespace FlappyBirdClone
 
         private float HorizontalSpacing = 180f;
         private int GapSize = 150; // gap between top and bottom pipes
-        private int MinimumGapSize = 50; 
+        private int MinimumGapSize = 50;
 
         public PipeManager() {
+
             // Create 3 pipes, spaced evenly
             var initialStartX = 400;
             for (int i = 0; i < 3; i++)
@@ -27,14 +28,17 @@ namespace FlappyBirdClone
             }
         }
 
-        public void Update(GameTime gameTime, int score)
+        public void Update(GameTime gameTime, int score, Boolean IsDead)
         {
             // UpdateGapHeight(score)
 
             // this is where you call pipe.update, not in Game.1
-            foreach (Pipe pipe in Pipes)
+            if (!IsDead)
             {
-                pipe.Update(gameTime);
+                foreach (Pipe pipe in Pipes)
+                {
+                    pipe.Update(gameTime);
+                }
             }
 
             // if the leftmost pipe goes off screen, move it accordingly
@@ -72,11 +76,11 @@ namespace FlappyBirdClone
             }
         }
 
-        public bool CheckCollision(Flappy bird) {
+        public bool CheckCollision(Flappy theBird) { // just pass the rectangle instead......
             foreach (var pipe in Pipes)
             {
-                if (pipe.TopRect.Intersects(bird.FlappyRectangle) ||
-                    pipe.BottomRect.Intersects(bird.FlappyRectangle))
+                if (pipe.TopRect.Intersects(theBird.FlappyRectangle) ||
+                    pipe.BottomRect.Intersects(theBird.FlappyRectangle))
                 {
                     return true;
                 }
