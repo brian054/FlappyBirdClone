@@ -34,7 +34,7 @@ namespace FlappyBirdClone
         public bool HasBeenPassedThrough { get; set; } = false;
         public float CenterX => TopRect.X + (TopRect.Width / 2f);
 
-        // computed property - so every time you access RightEdge in PipeManager, C# calcualtes the value right there.
+        // computed property - so every time you access RightEdge in pipeManager, C# calcualtes the value right there.
         public float RightEdge => _topPosition.X + _pipeWidth; // used to check if offscreen
 
         // Rects here are for drawing, collision. 

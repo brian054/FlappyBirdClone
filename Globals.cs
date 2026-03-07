@@ -20,5 +20,9 @@ namespace FlappyBirdClone
 
         public const int FloorHeight = 420; // the yPos of the ground
 
+        public enum GameState { MainMenu, Playing } // MainMenu - substates { Options menu }, Playing State - substates: Pause (transparent overlay), Game Over (Just a popup to reset or go to main menu)
+
+        // since these are just UI popups I figured I'd separate.
+        public enum OverlayState { None, Options, Pause, GameOver }
     }
 }

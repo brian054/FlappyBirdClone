@@ -1,30 +1,43 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FlappyBirdClone.States;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using static FlappyBirdClone.Globals;
+using FlappyBirdClone.UI;
 
 namespace FlappyBirdClone
 {
     public class Game1 : Game
     {
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
 
-        Flappy FlappyBird;
+        private Flappy flappy;
 
-        Texture2D backgroundTexture;
+        private Texture2D backgroundTexture;
 
-        PipeManager PipeManager;
+        private PipeManager pipeManager;
 
-        ScoreManager ScoreBoard;
+        private ScoreManager scoreBoard;
+
+        //private StateManager stateManager;
+        private GameState CurrentGameState = GameState.MainMenu;
+        private OverlayState CurrentOverlayState = OverlayState.None;
+
+        private MainMenuState mainMenu;
+
+        MouseState currMouse;
+        MouseState prevMouse; // move out to state manager?
+        bool playButtonClicked = false;
 
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = Globals.PreferredBackBufferWidth;
-            _graphics.PreferredBackBufferHeight = Globals.PreferredBackBufferHeight;
-            _graphics.SynchronizeWithVerticalRetrace = true;
-            _graphics.ApplyChanges();
+            graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = Globals.PreferredBackBufferWidth;
+            graphics.PreferredBackBufferHeight = Globals.PreferredBackBufferHeight;
+            graphics.SynchronizeWithVerticalRetrace = true;
+            graphics.ApplyChanges();
 
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -32,20 +45,18 @@ namespace FlappyBirdClone
             Window.Title = "Flappy Bird Clone!";
             Window.AllowUserResizing = false;
 
-            this.IsFixedTimeStep = true; // this is set to true by default in Monogame apparently, according to GPT
+            this.IsFixedTimeStep = true; // TODO: confirm if true by default
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0); // 60 updates per second
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Globals.dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
             Globals.dummyTexture.SetData(new[] { Color.White });
@@ -53,10 +64,10 @@ namespace FlappyBirdClone
 
             backgroundTexture = Content.Load<Texture2D>("background");
 
-            FlappyBird = new();
-            PipeManager = new();
-            ScoreBoard = new();
-
+            flappy = new();
+            pipeManager = new();
+            scoreBoard = new();
+            mainMenu = new();
         }
 
         protected override void Update(GameTime gameTime)
@@ -64,22 +75,27 @@ namespace FlappyBirdClone
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            FlappyBird.Update(gameTime);
-            if (!FlappyBird.IsDead)
-            {
-                PipeManager.Update(gameTime, 2, FlappyBird.IsDead); // draw score on screen asap (ScoreManager)
-            }
+            currMouse = Mouse.GetState();
 
-            if (!FlappyBird.IsDead && PipeManager.CheckCollision(FlappyBird))
+            switch (CurrentGameState)
             {
-                // game state = game over, 
-                FlappyBird.Die();
-                System.Diagnostics.Debug.WriteLine("COLLISION!");
-            }
-
-            if (PipeManager.DidFlappyPassThroughPipe(FlappyBird))
-            {
-                ScoreBoard.IncreaseScore(1);
+                case Globals.GameState.MainMenu:
+                    mainMenu.Update(gameTime);
+                    if (IsButtonClicked())
+                    {
+                        if (mainMenu.PlayButton.hoverPlay) // TODO: refactor hoverPlay to IsMouseHovering
+                        {
+                            CurrentGameState = GameState.Playing;
+                        }
+                        else if (mainMenu.ExitButton.hoverPlay)
+                        {
+                            Exit();
+                        }
+                    }
+                    break;
+                case Globals.GameState.Playing:
+                    UpdatePlaying(gameTime);
+                    break;
             }
 
             base.Update(gameTime);
@@ -89,15 +105,57 @@ namespace FlappyBirdClone
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _spriteBatch.Begin();
-            _spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
-                                                  new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
-            FlappyBird.Draw(_spriteBatch);
-            PipeManager.Draw(_spriteBatch);
-            ScoreBoard.Draw(_spriteBatch);
-            _spriteBatch.End();
-
+            spriteBatch.Begin();
+            switch (CurrentGameState)
+            {
+                case Globals.GameState.MainMenu:
+                    // do 
+                    mainMenu.Draw(spriteBatch);
+                    break;
+                case Globals.GameState.Playing:
+                    DrawPlaying(spriteBatch);
+                    break;
+            }
+            spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void UpdatePlaying(GameTime gameTime)
+        {
+            // Playing Game State
+            flappy.Update(gameTime);
+            if (!flappy.IsDead)
+            {
+                pipeManager.Update(gameTime, 2, flappy.IsDead); // draw score on screen asap (ScoreManager)
+            }
+
+            if (!flappy.IsDead && pipeManager.CheckCollision(flappy))
+            {
+                // game state = game over, 
+                flappy.Die();
+                System.Diagnostics.Debug.WriteLine("COLLISION!");
+            }
+
+            if (pipeManager.DidFlappyPassThroughPipe(flappy))
+            {
+                scoreBoard.IncreaseScore(1);
+            }
+
+            // ------------------------------
+        }
+
+        private void DrawPlaying(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
+                                                  new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
+            flappy.Draw(spriteBatch);
+            pipeManager.Draw(spriteBatch);
+            scoreBoard.Draw(spriteBatch);
+        }
+
+        private bool IsButtonClicked()
+        {
+            return (currMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released);
         }
     }
 }
