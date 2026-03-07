@@ -10,8 +10,7 @@ namespace FlappyBirdClone
         private SpriteFont font = Globals.DefaultFont;
         private int score;
 
-        // tweak these if you want it higher/lower
-        private readonly int _topPadding = 42; // 24
+        private readonly int _topPadding = 42; 
 
         public int Score => Score;
 
@@ -34,9 +33,7 @@ namespace FlappyBirdClone
 
             string text = score.ToString();
 
-            // measure so we can center it
             Vector2 size = font.MeasureString(text);
-
             Vector2 pos = new Vector2(
                 (Globals.PreferredBackBufferWidth - size.X) / 2f,
                 _topPadding
