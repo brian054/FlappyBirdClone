@@ -8,6 +8,15 @@ using FlappyBirdClone.UI;
 
 namespace FlappyBirdClone
 {
+    /*
+     * TODO:
+     * - Replace rects with textures
+     * - Add game over pop up, quit to menu option, or restart
+     * - 
+     * 
+     * 
+     */
+
     public class Game1 : Game
     {
         private GraphicsDeviceManager graphics;
@@ -83,11 +92,11 @@ namespace FlappyBirdClone
                     mainMenu.Update(gameTime);
                     if (IsButtonClicked())
                     {
-                        if (mainMenu.PlayButton.hoverPlay) // TODO: refactor hoverPlay to IsMouseHovering
+                        if (mainMenu.PlayButton.IsMouseHovering)
                         {
                             CurrentGameState = GameState.Playing;
                         }
-                        else if (mainMenu.ExitButton.hoverPlay)
+                        else if (mainMenu.ExitButton.IsMouseHovering)
                         {
                             Exit();
                         }
