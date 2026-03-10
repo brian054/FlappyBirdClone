@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlappyBirdClone
+namespace FlappyBirdClone.Managers
 {
     public class PipeManager
     {
@@ -23,12 +23,12 @@ namespace FlappyBirdClone
             var initialStartX = 400;
             for (int i = 0; i < 3; i++)
             {
-                float startX = initialStartX + (i * HorizontalSpacing);
+                float startX = initialStartX + i * HorizontalSpacing;
                 Pipes.Add(new Pipe(startX, GapSize));
             }
         }
 
-        public void Update(GameTime gameTime, int score, Boolean IsDead)
+        public void Update(GameTime gameTime, int score, bool IsDead)
         {
             // UpdateGapHeight(score)
 

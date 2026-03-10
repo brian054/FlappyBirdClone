@@ -1,4 +1,5 @@
-﻿using FlappyBirdClone.UI;
+﻿using FlappyBirdClone.Managers;
+using FlappyBirdClone.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,16 +10,22 @@ using System.Threading.Tasks;
 
 namespace FlappyBirdClone.States
 {
-    internal class MainMenuState
+    internal class MainMenuState : IGameState
     {
+        private readonly StateManager stateManager;
+        private Texture2D backgroundTexture;
         private SpriteFont MainMenuFont;
         private Vector2 TitlePos;
         public Button PlayButton { get; private set; }
         public Button OptionsButton { get; private set; }
         public Button ExitButton { get; private set; }
 
-        public MainMenuState()
+        public MainMenuState(StateManager sm)
         {
+            stateManager = sm;
+
+            backgroundTexture = Globals.backgroundTexture;
+
             int buttonWidth = 240;
             int centerX = Globals.PreferredBackBufferWidth / 2 - buttonWidth / 2;
 
@@ -36,11 +43,27 @@ namespace FlappyBirdClone.States
             PlayButton.Update();
             OptionsButton.Update();
             ExitButton.Update();
+
+            if (PlayButton.IsMouseHovering && MouseManager.LeftClicked())
+            {
+                stateManager.ChangeState(new PlayingState(stateManager));
+            }
+            //else if (OptionsButton.IsMouseHovering && MouseManager.LeftClicked())
+            //{
+            //    stateManager.ChangeState(new OptionsMenuState(stateManager));
+            //}
+            else if (ExitButton.IsMouseHovering && MouseManager.LeftClicked())
+            {
+                Environment.Exit(0);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(Globals.DefaultFont, "Flappy!", TitlePos, Color.White);
+            spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
+                                                  new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
+
+            spriteBatch.DrawString(Globals.DefaultFont, "Flappy \n Bird!", TitlePos, Color.White);
 
             PlayButton.Draw(spriteBatch);
             OptionsButton.Draw(spriteBatch);

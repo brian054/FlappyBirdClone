@@ -1,20 +1,22 @@
-﻿using FlappyBirdClone.States;
+﻿using FlappyBirdClone.Managers;
+using FlappyBirdClone.States;
+using FlappyBirdClone.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using static FlappyBirdClone.Globals;
-using FlappyBirdClone.UI;
 
 namespace FlappyBirdClone
 {
     /*
      * TODO:
-     * - Replace rects with textures
+     * - Replace rects with textures (last thing)
      * - Add game over pop up, quit to menu option, or restart
-     * - 
-     * 
-     * 
+     * - Add high score to game over pop up, persist it somehow
+     * - Upgrade Menu Screen after adding textures
+     * - reduce gapSize based on score
+     *
      */
 
     public class Game1 : Game
@@ -22,19 +24,15 @@ namespace FlappyBirdClone
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        private Flappy flappy;
+        //private Flappy flappy;
 
-        private Texture2D backgroundTexture;
+        private StateManager stateManager;
 
-        private PipeManager pipeManager;
+        //private PipeManager pipeManager;
 
-        private ScoreManager scoreBoard;
+        //private ScoreManager scoreBoard;
 
-        //private StateManager stateManager;
-        private GameState CurrentGameState = GameState.MainMenu;
-        private OverlayState CurrentOverlayState = OverlayState.None;
-
-        private MainMenuState mainMenu;
+        //private MainMenuState mainMenu;
 
         MouseState currMouse;
         MouseState prevMouse; // move out to state manager?
@@ -71,100 +69,88 @@ namespace FlappyBirdClone
             Globals.dummyTexture.SetData(new[] { Color.White });
             Globals.DefaultFont = Content.Load<SpriteFont>("ScoreBoardFont");
 
-            backgroundTexture = Content.Load<Texture2D>("background");
+            Globals.backgroundTexture = Content.Load<Texture2D>("background");
 
-            flappy = new();
-            pipeManager = new();
-            scoreBoard = new();
-            mainMenu = new();
+            stateManager = new();
+            stateManager.ChangeState(new MainMenuState(stateManager));
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //    Exit();
 
-            currMouse = Mouse.GetState();
+            KeyboardManager.Update();
+            MouseManager.Update();
 
-            switch (CurrentGameState)
-            {
-                case Globals.GameState.MainMenu:
-                    mainMenu.Update(gameTime);
-                    if (IsButtonClicked())
-                    {
-                        if (mainMenu.PlayButton.IsMouseHovering)
-                        {
-                            CurrentGameState = GameState.Playing;
-                        }
-                        else if (mainMenu.ExitButton.IsMouseHovering)
-                        {
-                            Exit();
-                        }
-                    }
-                    break;
-                case Globals.GameState.Playing:
-                    UpdatePlaying(gameTime);
-                    break;
-            }
+            stateManager.Update(gameTime);
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+           // GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            switch (CurrentGameState)
-            {
-                case Globals.GameState.MainMenu:
-                    // do 
-                    mainMenu.Draw(spriteBatch);
-                    break;
-                case Globals.GameState.Playing:
-                    DrawPlaying(spriteBatch);
-                    break;
-            }
+            //switch (CurrentGameState)
+            //{
+            //    case Globals.GameState.MainMenu:
+            //        // do 
+            //        mainMenu.Draw(spriteBatch);
+            //        break;
+            //    case Globals.GameState.Playing:
+            //        DrawPlaying(spriteBatch);
+            //        break;
+            //}
+
+            stateManager.Draw(spriteBatch);
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
 
-        private void UpdatePlaying(GameTime gameTime)
-        {
-            // Playing Game State
-            flappy.Update(gameTime);
-            if (!flappy.IsDead)
-            {
-                pipeManager.Update(gameTime, 2, flappy.IsDead); // draw score on screen asap (ScoreManager)
-            }
+        //private void UpdatePlaying(GameTime gameTime)
+        //{
+        //    // Playing Game State
+        //    flappy.Update(gameTime);
+        //    if (!flappy.IsDead)
+        //    {
+        //        pipeManager.Update(gameTime, 2, flappy.IsDead); // draw score on screen asap (ScoreManager)
+        //    }
 
-            if (!flappy.IsDead && pipeManager.CheckCollision(flappy))
-            {
-                // game state = game over, 
-                flappy.Die();
-                System.Diagnostics.Debug.WriteLine("COLLISION!");
-            }
+        //    if (!flappy.IsDead && pipeManager.CheckCollision(flappy))
+        //    {
+        //        // game state = game over, 
+        //        flappy.Die();
+        //        System.Diagnostics.Debug.WriteLine("COLLISION!");
+        //    }
 
-            if (pipeManager.DidFlappyPassThroughPipe(flappy))
-            {
-                scoreBoard.IncreaseScore(1);
-            }
+        //    if (pipeManager.DidFlappyPassThroughPipe(flappy))
+        //    {
+        //        scoreBoard.IncreaseScore(1);
+        //    }
 
-            // ------------------------------
-        }
+        //    // ------------------------------
+        //}
 
-        private void DrawPlaying(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
-                                                  new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
-            flappy.Draw(spriteBatch);
-            pipeManager.Draw(spriteBatch);
-            scoreBoard.Draw(spriteBatch);
-        }
+        //private void DrawPlaying(SpriteBatch spriteBatch)
+        //{
+        //    spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
+        //                                          new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
+        //    flappy.Draw(spriteBatch);
+        //    pipeManager.Draw(spriteBatch);
+        //    scoreBoard.Draw(spriteBatch);
+        //}
 
-        private bool IsButtonClicked()
-        {
-            return (currMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released);
-        }
+        //private void DrawGameOver(SpriteBatch spriteBatch)
+        //{
+
+        //}
+
+        //private bool IsButtonClicked()
+        //{
+        //    return (currMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released);
+        //}
     }
 }
