@@ -33,6 +33,7 @@ namespace FlappyBirdClone.States
 
         public void Update(GameTime gameTime) 
         {
+            ResumeButton.Update();
             RestartButton.Update();
             ExitButton.Update();
 

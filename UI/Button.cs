@@ -1,25 +1,28 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FlappyBirdClone.UI
 {
+    // TODO: make this more generic so we can use it in the future
+    // How? do height and width, not a vector2, m
     internal class Button
     {
         private SpriteFont ButtonFont;
 
         private string ButtonText;
 
-        private Vector2 ButtonPos;
+        public Point Size;
+        public Vector2 Position;
 
-        private Rectangle ButtonRect;
-
-        private int ButtonWidth;
-        private int ButtonHeight;
+        //public float Width => Size.X;
+        //public float Height => Size.Y;
 
         MouseState mouse;
         public bool IsMouseHovering { get; private set; }
@@ -29,22 +32,31 @@ namespace FlappyBirdClone.UI
         private Color ButtonColor;
 
         private Vector2 textPosition;
+        private Vector2 textSize;
+
+        public Rectangle ButtonRect =>
+            new Rectangle(
+                (int)Position.X,
+                (int)Position.Y,
+                Size.X,
+                Size.Y
+            );
 
         public Button(string buttonText, Vector2 buttonPos, int buttonWidth, Color buttonColor)
         {
             ButtonText = buttonText;
             ButtonColor = buttonColor;
-            ButtonPos = buttonPos;
-            ButtonWidth = buttonWidth;
-            ButtonHeight = (int)(ButtonWidth / AspectRatio);
+            Position = buttonPos;
+            Size = new Point(buttonWidth, (int)(buttonWidth / AspectRatio));
+            //ButtonWidth = buttonWidth;
+            //ButtonHeight = (int)(ButtonWidth / AspectRatio);
 
-            ButtonRect = new Rectangle((int)ButtonPos.X, (int)ButtonPos.Y, ButtonWidth, ButtonHeight);
-
-            Vector2 textSize = Globals.DefaultFont.MeasureString(ButtonText);
-            float centerX = ButtonPos.X + ButtonWidth / 2f;
-            float centerY = ButtonPos.Y + ButtonHeight / 2f;
+            float centerX = Position.X + Size.X / 2f;
+            float centerY = Position.Y + Size.Y / 2f;
 
             textPosition = new Vector2(centerX - textSize.X / 2f, centerY - textSize.Y / 2f);
+            textSize = Globals.DefaultFont.MeasureString(ButtonText);
+
         }
 
         public void Update()
@@ -61,18 +73,33 @@ namespace FlappyBirdClone.UI
             {
                 IsMouseHovering = false;
             }
+            
+            UpdateTextPosition();
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Globals.dummyTexture, new Vector2(ButtonRect.X, ButtonRect.Y), ButtonRect, ButtonColor);
+            spriteBatch.Draw(Globals.dummyTexture, ButtonRect, ButtonColor);
             if (IsMouseHovering)
             {
-                spriteBatch.Draw(Globals.dummyTexture, new Vector2(ButtonRect.X, ButtonRect.Y), ButtonRect, Color.Black * 0.7f);
+                spriteBatch.Draw(Globals.dummyTexture, ButtonRect, Color.Black * 0.7f);
             }
+
+            textPosition = new Vector2(
+                ButtonRect.X + (ButtonRect.Width - textSize.X) / 2f,
+                ButtonRect.Y + (ButtonRect.Height - textSize.Y) / 2f
+            );
 
             spriteBatch.DrawString(Globals.DefaultFont, ButtonText, textPosition, Color.White);
         }
 
+        // we're currently calling this every frame, kinda only wanna call it when the ButtonRect.Position value changes
+        private void UpdateTextPosition()
+        {
+            textPosition = new Vector2(
+                ButtonRect.X + (ButtonRect.Width - textSize.X) / 2f,
+                ButtonRect.Y + (ButtonRect.Height - textSize.Y) / 2f
+            );
+        }
     }
 }

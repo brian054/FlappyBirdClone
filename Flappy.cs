@@ -22,6 +22,7 @@ namespace FlappyBirdClone
         private Vector2 Size { get; set; } // where X = width, X = height
 
         public bool IsDead { get; private set; }
+        public bool HasHitGround { get; private set; } // are these default false or? could just do a method public bool HasHitGround() 
         private float VerticalVelocity = 0;
         private float FlyUpSpeed = -220f; 
         private float MaxFallSpeed = 900f;
@@ -78,6 +79,7 @@ namespace FlappyBirdClone
                 Position.Y = floorY;
                 VerticalVelocity = 0f;
                 IsDead = true;
+                HasHitGround = true;
             }
         }
         public void Draw(SpriteBatch spriteBatch)

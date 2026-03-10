@@ -21,6 +21,11 @@ namespace FlappyBirdClone.States
 
         private ScoreManager scoreBoard;
 
+        private bool gameOverTriggered = false;
+        private bool gameOverMenuShown = false; // so we don't push the GameOverState every frame while flappy is on the ground, do only once!
+        private float gameOverDelayTimer = 0f;
+        private const float GameOverDelay = 0.5f;
+
         public PlayingState(StateManager sm)
         {
             stateManager = sm; 
@@ -33,23 +38,40 @@ namespace FlappyBirdClone.States
 
         public void Update(GameTime gameTime)
         {
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             flappy.Update(gameTime);
             if (!flappy.IsDead)
             {
                 pipeManager.Update(gameTime, 2, flappy.IsDead); // draw score on screen asap (ScoreManager)
+
+                if (pipeManager.CheckCollision(flappy))
+                {
+                    flappy.Die();
+                    gameOverTriggered = true;
+                }
+
+                if (pipeManager.DidFlappyPassThroughPipe(flappy))
+                {
+                    scoreBoard.IncreaseScore(1);
+                }
+            } else
+            {
+                // if flappy hits the ground make sure we trigger gameOver.
+                gameOverTriggered = true;
             }
 
-            if (!flappy.IsDead && pipeManager.CheckCollision(flappy))
+            if (gameOverTriggered && flappy.HasHitGround && !gameOverMenuShown)
             {
-                // game state = game over, 
-                flappy.Die();
-                System.Diagnostics.Debug.WriteLine("COLLISION!");
+                gameOverDelayTimer += dt;
+
+                if (gameOverDelayTimer >= GameOverDelay)
+                {
+                    gameOverMenuShown = true;
+                    stateManager.PushState(new GameOverState(stateManager));
+                }
             }
 
-            if (pipeManager.DidFlappyPassThroughPipe(flappy))
-            {
-                scoreBoard.IncreaseScore(1);
-            }
 
             if (KeyboardManager.WasKeyPressed(Keys.Escape)) {
                 stateManager.PushState(new PauseState(stateManager));

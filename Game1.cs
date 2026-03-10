@@ -24,19 +24,7 @@ namespace FlappyBirdClone
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        //private Flappy flappy;
-
         private StateManager stateManager;
-
-        //private PipeManager pipeManager;
-
-        //private ScoreManager scoreBoard;
-
-        //private MainMenuState mainMenu;
-
-        MouseState currMouse;
-        MouseState prevMouse; // move out to state manager?
-        bool playButtonClicked = false;
 
         public Game1()
         {
@@ -90,67 +78,13 @@ namespace FlappyBirdClone
 
         protected override void Draw(GameTime gameTime)
         {
-           // GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            //switch (CurrentGameState)
-            //{
-            //    case Globals.GameState.MainMenu:
-            //        // do 
-            //        mainMenu.Draw(spriteBatch);
-            //        break;
-            //    case Globals.GameState.Playing:
-            //        DrawPlaying(spriteBatch);
-            //        break;
-            //}
-
             stateManager.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
         }
-
-        //private void UpdatePlaying(GameTime gameTime)
-        //{
-        //    // Playing Game State
-        //    flappy.Update(gameTime);
-        //    if (!flappy.IsDead)
-        //    {
-        //        pipeManager.Update(gameTime, 2, flappy.IsDead); // draw score on screen asap (ScoreManager)
-        //    }
-
-        //    if (!flappy.IsDead && pipeManager.CheckCollision(flappy))
-        //    {
-        //        // game state = game over, 
-        //        flappy.Die();
-        //        System.Diagnostics.Debug.WriteLine("COLLISION!");
-        //    }
-
-        //    if (pipeManager.DidFlappyPassThroughPipe(flappy))
-        //    {
-        //        scoreBoard.IncreaseScore(1);
-        //    }
-
-        //    // ------------------------------
-        //}
-
-        //private void DrawPlaying(SpriteBatch spriteBatch)
-        //{
-        //    spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
-        //                                          new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
-        //    flappy.Draw(spriteBatch);
-        //    pipeManager.Draw(spriteBatch);
-        //    scoreBoard.Draw(spriteBatch);
-        //}
-
-        //private void DrawGameOver(SpriteBatch spriteBatch)
-        //{
-
-        //}
-
-        //private bool IsButtonClicked()
-        //{
-        //    return (currMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released);
-        //}
     }
 }

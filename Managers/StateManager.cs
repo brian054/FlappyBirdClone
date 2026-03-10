@@ -26,6 +26,7 @@ namespace FlappyBirdClone.Managers
         private IGameState previousState;
         public void ChangeState(IGameState newState)
         {
+            previousState = null;
             currState = newState;
         }
 
@@ -48,6 +49,7 @@ namespace FlappyBirdClone.Managers
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            previousState?.Draw(spriteBatch);
             currState?.Draw(spriteBatch);
         }
     }
