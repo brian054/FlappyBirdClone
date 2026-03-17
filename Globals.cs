@@ -15,6 +15,8 @@ namespace FlappyBirdClone
         public static Texture2D dummyTexture;
         public static Texture2D backgroundTexture;
         public static Texture2D BlueBirdDownFlapTexture;
+        public static Texture2D BottomPipeT;
+        public static Texture2D TopPipeT;
 
         public static readonly Random Random = new Random();
 

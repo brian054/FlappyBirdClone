@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using static FlappyBirdClone.Globals;
 
 namespace FlappyBirdClone
@@ -59,6 +60,8 @@ namespace FlappyBirdClone
 
             Globals.backgroundTexture = Content.Load<Texture2D>("background");
             Globals.BlueBirdDownFlapTexture = Content.Load<Texture2D>("bluebird-downflap");
+            Globals.BottomPipeT = Content.Load<Texture2D>("pipe-green-bottom");
+            Globals.TopPipeT = Content.Load<Texture2D>("pipe-green-top");
 
             stateManager = new();
             stateManager.ChangeState(new MainMenuState(stateManager));
@@ -81,7 +84,8 @@ namespace FlappyBirdClone
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            //spriteBatch.Begin();
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             stateManager.Draw(spriteBatch);
 
             spriteBatch.End();

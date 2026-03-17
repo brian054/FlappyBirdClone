@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework;
 using System;
+using System.Diagnostics;
 
 namespace FlappyBirdClone
 {
@@ -29,13 +30,16 @@ namespace FlappyBirdClone
         private Vector2 _bottomPosition;
         private float Speed = 120f; 
         private Vector2 _topSize { get; set; } // where X = width, Y = height
-        private const int _pipeWidth = 50;
+        private const int _pipeWidth = 52;
         public Vector2 _bottomSize { get; private set; }
         public bool HasBeenPassedThrough { get; set; } = false;
         public float CenterX => TopRect.X + (TopRect.Width / 2f);
 
         // computed property - so every time you access RightEdge in pipeManager, C# calcualtes the value right there.
         public float RightEdge => _topPosition.X + _pipeWidth; // used to check if offscreen
+
+        private Texture2D BottomPipeTexture = Globals.BottomPipeT;
+        private Texture2D TopPipeTexture = Globals.TopPipeT;
 
         // Rects here are for drawing, collision. 
         // Not technically a public variable, it's a public property with only a getter, therefore outside of this
@@ -55,12 +59,13 @@ namespace FlappyBirdClone
                (int)MathF.Round(_bottomSize.Y)
            );
 
+
         public Pipe(float startPosX, float gapSize)
         {
             _topPosition = new Vector2(startPosX, 0); // y is constant
             _topSize = new Vector2(_pipeWidth, randomNum.Next(90, 200)); 
             _bottomPosition = new Vector2(startPosX, _topSize.Y + gapSize);
-            _bottomSize = new Vector2(_pipeWidth, Globals.FloorHeight - _topSize.Y - gapSize); 
+            _bottomSize = new Vector2(_pipeWidth, Globals.FloorHeight - _topSize.Y - gapSize);
         }
 
         public void Update(GameTime gameTime)
@@ -69,12 +74,34 @@ namespace FlappyBirdClone
             float dx = Speed * dt;
 
             _topPosition.X -= dx;
-            _bottomPosition.X -= dx;
+            _bottomPosition.X -= dx; 
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Globals.dummyTexture, TopRect, Color.Red);
-            spriteBatch.Draw(Globals.dummyTexture, BottomRect, Color.Red);
+            // GPT Suggestion - TODO = Review: You'd draw TopDest instead of TopRect, idk
+            //int topHeight = Math.Min(TopRect.Height, TopPipeTexture.Height);
+            //int bottomHeight = Math.Min(BottomRect.Height, BottomPipeTexture.Height);
+
+            //Rectangle topDest = new Rectangle(TopRect.X, TopRect.Y, TopRect.Width, topHeight);
+            //Rectangle bottomDest = new Rectangle(BottomRect.X, BottomRect.Y, BottomRect.Width, bottomHeight);
+
+
+            Rectangle topSource = new Rectangle(
+                0,
+                TopPipeTexture.Height - TopRect.Height, // this is sketchy, might wanna clamp, never know when someone will sub in a smaller pipe texture then this crap goes negative and BOOM
+                TopPipeTexture.Width,
+                TopRect.Height
+            );
+
+            Rectangle bottomSource = new Rectangle(
+                0,
+                0,
+                BottomPipeTexture.Width,
+                BottomRect.Height
+            );
+
+            spriteBatch.Draw(TopPipeTexture, TopRect, topSource, Color.White);
+            spriteBatch.Draw(BottomPipeTexture, BottomRect, bottomSource, Color.White);
         }
 
         // Scenario: Pipe goes off screen, this method repositions the pipes x position so we can recycle the pipe pair.

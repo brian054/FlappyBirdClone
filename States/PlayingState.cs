@@ -63,13 +63,13 @@ namespace FlappyBirdClone.States
 
             if (gameOverTriggered && flappy.HasHitGround && !gameOverMenuShown)
             {
-                gameOverDelayTimer += dt;
+                //gameOverDelayTimer += dt;
 
-                if (gameOverDelayTimer >= GameOverDelay)
-                {
-                    gameOverMenuShown = true;
-                    stateManager.PushState(new GameOverState(stateManager));
-                }
+                //if (gameOverDelayTimer >= GameOverDelay)
+                //{
+                //    gameOverMenuShown = true;
+                //    stateManager.PushState(new GameOverState(stateManager));
+                //}
             }
 
 
