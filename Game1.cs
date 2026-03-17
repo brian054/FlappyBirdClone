@@ -58,6 +58,7 @@ namespace FlappyBirdClone
             Globals.DefaultFont = Content.Load<SpriteFont>("ScoreBoardFont");
 
             Globals.backgroundTexture = Content.Load<Texture2D>("background");
+            Globals.BlueBirdDownFlapTexture = Content.Load<Texture2D>("bluebird-downflap");
 
             stateManager = new();
             stateManager.ChangeState(new MainMenuState(stateManager));

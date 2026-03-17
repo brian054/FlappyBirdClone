@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Runtime.CompilerServices;
 using System;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 /*
  * I'll start linking the docs to stuff you can show in the tutorials:
@@ -31,6 +32,8 @@ namespace FlappyBirdClone
         private KeyboardState CurrKeyState;
         private KeyboardState PrevKeyState;
 
+        private Texture2D BlueBirdDownFlapTexture = Globals.BlueBirdDownFlapTexture;
+
         public Rectangle FlappyRectangle =>
             new Rectangle(
                 (int)MathF.Round(Position.X),
@@ -42,7 +45,7 @@ namespace FlappyBirdClone
         public Flappy()
         {
             // Default positions: x = middle of screen, y = middle of screen, maybe 1/3 up screen
-            Size = new Vector2(25, 24); // 34 x 24 pixels
+            Size = new Vector2(34, 24); // (25, 24); // 34 x 24 pixels
             Position = new Vector2(Globals.PreferredBackBufferWidth / 2 - (Size.X / 2), Globals.PreferredBackBufferHeight / 3);
         }
 
@@ -84,7 +87,7 @@ namespace FlappyBirdClone
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Globals.dummyTexture, Position, FlappyRectangle, Color.Red);
+            spriteBatch.Draw(BlueBirdDownFlapTexture, Position, Color.White);
         }
 
         public void Die()
