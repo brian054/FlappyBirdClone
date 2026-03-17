@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace FlappyBirdClone.Managers
 {
@@ -14,7 +16,7 @@ namespace FlappyBirdClone.Managers
         private readonly Random rng = new();
 
         private float HorizontalSpacing = 180f;
-        private int GapSize = 150; // gap between top and bottom pipes
+        private int CurrentGapSize = 150; // gap between top and bottom pipes.....wait is this actually doing anything tho hold on
         private int MinimumGapSize = 50;
 
         public PipeManager() {
@@ -24,15 +26,16 @@ namespace FlappyBirdClone.Managers
             for (int i = 0; i < 3; i++)
             {
                 float startX = initialStartX + i * HorizontalSpacing;
-                Pipes.Add(new Pipe(startX, GapSize));
+                Pipes.Add(new Pipe(startX, CurrentGapSize));
             }
         }
 
         public void Update(GameTime gameTime, int score, bool IsDead)
         {
-            // UpdateGapHeight(score)
+            UpdateGapHeight(score);
 
-            // this is where you call pipe.update, not in Game.1
+            Debug.WriteLine("CurrentGapSize: " + CurrentGapSize);
+
             if (!IsDead)
             {
                 foreach (Pipe pipe in Pipes)
@@ -44,12 +47,13 @@ namespace FlappyBirdClone.Managers
             // if the leftmost pipe goes off screen, move it accordingly
             if (Pipes[0].RightEdge < 0)
             {
-                var leftmostPipe = Pipes[0]; // copying the reference here, not cloning the object, so when you modify this it changes the same Pipe obj.
-                var rightmostPipe = Pipes[2];
+                // copying the reference here, not cloning the object, so when you modify this it changes the same Pipe obj.
+                // do we just assume this, or should I add a check here to make sure? 
+                // I guess I'm always removing at index 0, which should always be leftmost pipe, and add() adds to end so it'll always be 'right-most'
+                var rightmostPipe = Pipes[2]; 
 
-                // calc new X position
                 float newXPos = rightmostPipe.XPos + HorizontalSpacing;
-                leftmostPipe.RecycleXPos(newXPos);
+                var leftmostPipe = new Pipe(newXPos, CurrentGapSize);
 
                 // rotate pipes
                 Pipes.RemoveAt(0);
@@ -68,11 +72,11 @@ namespace FlappyBirdClone.Managers
         private int GapLevel = 0; // as you go up in GapLevel, the gap shrinks
         private void UpdateGapHeight(int score)
         {
-            int level = score / 15; // 15 points = level 1, 30 = level 2, etc.
+            int level = score / 2; // 15 points = level 1, 30 = level 2, etc.
             if (level > GapLevel)
             {
                 GapLevel = level;
-                GapSize = Math.Max(90, GapSize - 20); // adjust these
+                CurrentGapSize = Math.Max(70, CurrentGapSize - 20); // adjust these
             }
         }
 

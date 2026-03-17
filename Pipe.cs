@@ -105,14 +105,14 @@ namespace FlappyBirdClone
         }
 
         // Scenario: Pipe goes off screen, this method repositions the pipes x position so we can recycle the pipe pair.
-        public void RecycleXPos(float newXPos)
-        {
-            _topPosition.X = newXPos;
-            _bottomPosition.X = newXPos;
+        //public void RecycleXPos(float newXPos, int CurrentGapSize)
+        //{
+        //    _topPosition.X = newXPos;
+        //    _bottomPosition.X = newXPos;
 
-            // RESET!!!
-            HasBeenPassedThrough = false;
-        }
+        //    // RESET!!!
+        //    HasBeenPassedThrough = false;
+        //}
 
         //public void SetGap()
         //{

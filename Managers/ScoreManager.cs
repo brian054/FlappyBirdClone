@@ -12,7 +12,7 @@ namespace FlappyBirdClone.Managers
 
         private readonly int _topPadding = 42; 
 
-        public int Score => Score;
+        public int Score => score;
 
         public ScoreManager() { }
 

@@ -43,19 +43,22 @@ namespace FlappyBirdClone.States
             flappy.Update(gameTime);
             if (!flappy.IsDead)
             {
-                pipeManager.Update(gameTime, 2, flappy.IsDead); // draw score on screen asap (ScoreManager)
+                pipeManager.Update(gameTime, scoreBoard.Score, flappy.IsDead); // draw score on screen asap (ScoreManager)
 
-                if (pipeManager.CheckCollision(flappy))
-                {
-                    flappy.Die();
-                    gameOverTriggered = true;
-                }
+                // TODO: Clean up all the code
+
+                //if (pipeManager.CheckCollision(flappy))
+                //{
+                //    flappy.Die();
+                //    gameOverTriggered = true;
+                //}
 
                 if (pipeManager.DidFlappyPassThroughPipe(flappy))
                 {
                     scoreBoard.IncreaseScore(1);
                 }
-            } else
+            } 
+            else
             {
                 // if flappy hits the ground make sure we trigger gameOver.
                 gameOverTriggered = true;
@@ -81,6 +84,12 @@ namespace FlappyBirdClone.States
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            /*
+             * TODO: 
+             * - Slide the background texture with the pipes, to give illusion of movement
+             * - Curr behavior: just static
+             * 
+             */
             spriteBatch.Draw(backgroundTexture, new Rectangle(0, 0, Globals.PreferredBackBufferWidth, Globals.PreferredBackBufferHeight),
                                                   new Rectangle(0, 0, Globals.PreferredBackBufferWidth, backgroundTexture.Height), Color.White);
             flappy.Draw(spriteBatch);
