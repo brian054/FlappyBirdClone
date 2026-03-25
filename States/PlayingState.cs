@@ -46,6 +46,7 @@ namespace FlappyBirdClone.States
                 pipeManager.Update(gameTime, scoreBoard.Score, flappy.IsDead); // draw score on screen asap (ScoreManager)
 
                 // TODO: Clean up all the code
+                // TODO: test contribution graph, not showing up when I commit.
 
                 //if (pipeManager.CheckCollision(flappy))
                 //{
