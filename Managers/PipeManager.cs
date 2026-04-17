@@ -34,7 +34,7 @@ namespace FlappyBirdClone.Managers
         {
             UpdateGapHeight(score);
 
-            Debug.WriteLine("CurrentGapSize: " + CurrentGapSize);
+            Debug.WriteLine("CurrentGapSize: " + CurrentGapSize); // TODO: remove or comment out
 
             if (!IsDead)
             {
